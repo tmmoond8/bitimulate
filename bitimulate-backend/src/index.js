@@ -3,7 +3,9 @@ const Koa = require('koa');
 const app = new Koa();
 const Router = require('koa-router');
 const api = require('./api');
+const db = require('./db');
 
+db.connect();
 // load environment variables
 const {
   PORT: port
@@ -19,5 +21,5 @@ app.use(ctx => {
 });
 
 app.listen(port, () => {
-  console.log(`hurm server is listening to port ${port}`);
+  console.log(`bitimulate server is listening to port ${port}`);
 });
