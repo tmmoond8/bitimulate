@@ -9,6 +9,49 @@ const { parseJSON, polyfill } = require('../lib/common');
 db.connect();
 socket.connect();
 
+async function registerInitialExchangeRate() {
+  const tickers = await poloniex.getTickers();
+
+  // removes all the data from the collection (only for temporary use);
+  await ExchangeRate.drop();
+  const keys = Object.keys(tickers);
+  const promises = keys.map(
+    key => {
+      const ticker = tickers[key];
+      const data = Object.assign({name: key}, ticker);
+      const exchangeRate = new ExchangeRate(data);
+      return exchangeRate.save();
+    }
+  );
+
+  try {
+    await Promise.all(promises);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+async function updateEntireRate() {
+  const tickers = await poloniex.getTickers();
+  const keys = Object.keys(tickers);
+
+  const promises = keys.map(
+    key => {
+      return ExchangeRate.updateTicker(key, tickers[key]);
+    }
+  );
+
+  try {
+    await Promise.all(promises);
+  } catch (e) {
+    console.error('Oops, failed to update entire rate !');
+    return;
+  }
+
+  console.log('Updated entire rate.');
+}
+
+
 const messageHandler = {
   1002: async (data) => {
     if (!data) return;
@@ -19,7 +62,7 @@ const messageHandler = {
     try {
       // console.log(name, rest);
       const updated = await ExchangeRate.updateTicker(name, rest);
-      console.log(updated);
+      console.log('[Update]', name, new Date());
     } catch (e) {
       console.error(e);
     }
@@ -39,25 +82,6 @@ socket.handleMessage = (message) => {
   }
 }
 
-async function registerInitialExchangeRate() {
-  const tickers = await poloniex.getTickers();
-  await ExchangeRate.drop();
-  const keys = Object.keys(tickers);
-  const promises = keys.map(
-    key => {
-      const ticker = tickers[key];
-      const data = Object.assign({name: key}, ticker);
-      const exchangeRate = new ExchangeRate(data);
-      return exchangeRate.save();
-    }
-  );
-
-  // try {
-  //   await Promise.all(promises);
-  // } catch (e) {
-  //   console.log(e);
-  // }
-}
-
-
-registerInitialExchangeRate();
+socket.handleRefresh = () => {
+  updateEntireRate();
+};
