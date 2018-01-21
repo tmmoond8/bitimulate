@@ -15,6 +15,7 @@ module.exports = (function() {
       _messagehandler(message);
     }
   };
+  
   const connect = () => {
     _client = new WebSocket('wss://api2.poloniex.com');
     _client.on('open', handlers.open);

@@ -30,7 +30,6 @@ ExchangeRate.statics.drop = function () {
 ExchangeRate.index({name: 1}, {name: 'rateTypeIdentifier', unique: true});
 
 ExchangeRate.statics.updateTicker = function(name, data) {
-  // console.log(name, data);
   return this.findOneAndUpdate({name}, {data, lastUpdate: new Date()}, { upsert: false, new: true}).exec();
 };
 

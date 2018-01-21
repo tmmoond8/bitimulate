@@ -47,10 +47,8 @@ async function updateEntireRate() {
     console.error('Oops, failed to update entire rate !');
     return;
   }
-
   console.log('Updated entire rate.');
 }
-
 
 const messageHandler = {
   1002: async (data) => {
@@ -60,7 +58,6 @@ const messageHandler = {
     const rest = polyfill.objectWithoutProperties(converted, 'name');
     
     try {
-      // console.log(name, rest);
       const updated = await ExchangeRate.updateTicker(name, rest);
       console.log('[Update]', name, new Date());
     } catch (e) {
@@ -71,7 +68,6 @@ const messageHandler = {
 }
 
 socket.handleMessage = (message) => {
-  // console.log(message);
   const parsed = parseJSON(message);
   if (!parsed) {
     return null;
@@ -82,6 +78,4 @@ socket.handleMessage = (message) => {
   }
 }
 
-socket.handleRefresh = () => {
-  updateEntireRate();
-};
+socket.handleRefresh = updateEntireRate;
