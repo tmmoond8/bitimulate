@@ -1,7 +1,6 @@
 const currencyPairMap = require('./currencyPairMap');
 const axios = require('axios');
 
-
 module.exports = (function () {
   function getCurrentPairName(id) {
     return currencyPairMap[id].toString();
@@ -15,7 +14,7 @@ module.exports = (function () {
   const obj = {};
   function convertToTickerObject(data) {
     const keys = [
-      'id',
+      'name',
       'last',
       'lowestAsk',
       'highestBid',
@@ -26,26 +25,14 @@ module.exports = (function () {
       'high24hr',
       'low24hr'
     ];
-    // const obj = {};
-    // data.forEach((value, i) => {
-    //   const key = keys[i];
-    //   obj[key] = value;
-    // });
+    data[0] = getCurrentPairName(data[0]);
     data.forEach((value, i) => {
-      if ( i === 0 ) {
-        obj.name = getCurrentPairName(value)
-        return;
-      }
-      const key = keys[i];
-      obj[key] = value;
-    })
-    
+      obj[keys[i]] = value;
+    });
 
     return obj;
   }
-
-
-
+  
   return {
     getCurrentPairName,
     getTickers,
