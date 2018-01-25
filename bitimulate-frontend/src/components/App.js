@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
-import { Button } from './index';
+import { HomePage, TradePage } from 'components';
+import { Route } from 'react-router-dom';
 
 class App extends Component {
+
   render() {
+    console.log(HomePage);
     return (
       <div>
-        <Button/>
+        <Route exact path="/" component={HomePage}/>
+        <Route path="/trade" component={TradePage}/>
       </div>
     );
   }
