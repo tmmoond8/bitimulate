@@ -1,11 +1,11 @@
 import React from 'react';
-import { Header, PageTemplate } from 'components';
+import { Header, PageTemplate, PolyBackground } from 'components';
 
 const HomePage = () => {
   return (
     <PageTemplate 
-      header={<Header/>}
-      responsive>
+      header={<Header/>}>
+      <PolyBackground/>
       Home
     </PageTemplate>
   );

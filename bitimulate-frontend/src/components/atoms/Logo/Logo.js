@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from 'static/images/logo.png';
 import styles from './Logo.scss';
 import classNames from 'classnames/bind';
 
