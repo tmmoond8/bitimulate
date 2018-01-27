@@ -5,6 +5,9 @@
   overflow: hidden;
   clip-path: polygon(0 0, 100% 0, 100% 85%, 30% 100%, 0 75%);
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   .image {
     transition: all 1s ease-in;
     background: url('static/images/background.png');
@@ -16,5 +19,19 @@
     &.blur {
       opacity: 0;
     }
+  }
+
+  .inner {
+    position: absolute;
+    top: 0rem;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-top: -5rem;
   }
 }
