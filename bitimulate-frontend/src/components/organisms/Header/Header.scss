@@ -11,4 +11,15 @@
     height: 100%;
     align-items: center;
   }
+
+  .right-side {
+    display: flex;
+    margin-left: auto;
+  }
+  .login-button {
+    margin-left: 1rem;
+    &:hover {
+      background: material-color('light-blue', '900');
+    }
+  }
 }

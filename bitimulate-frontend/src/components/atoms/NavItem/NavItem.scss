@@ -1,0 +1,17 @@
+@import 'utils';
+
+.nav-item {
+  display: flex;
+  justify-content: content;
+  align-items: center;
+  padding-right: 1rem;
+  padding-left:1rem;
+  font-weight: 700;
+  color: material-color('grey', '50');
+  cursor: pointer;
+  transition: all .3s;
+  &:hover {
+    color: material-colr('grey', '50');
+    transform: scale(1.3, 1.3);
+  }
+}

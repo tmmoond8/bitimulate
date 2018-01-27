@@ -15,12 +15,12 @@ class PolyBackground extends Component {
     image.src = background;
 
     const cached = image.complete || (image.width + image.height) > 0;
-    // if (cached) {
-    //   this.setState({
-    //     loaded: true
-    //   });
-    //   return;
-    // }
+    if (cached) {
+      this.setState({
+        loaded: true
+      });
+      return;
+    }
 
     image.onload = () => {
       this.setState({
@@ -35,9 +35,17 @@ class PolyBackground extends Component {
 
   render() {
     const { loaded } = this.state;
+    const { children } = this.props;
     return (
       <div className={cx('poly-background')}>
-        <div className={cx('image', { blur: !loaded })}>
+        <div className={cx('image', { 
+            blur: !loaded,
+
+          }
+        )}>
+        </div>
+        <div class={cx('inner')}>
+          {children}
         </div>
       </div>
     );
