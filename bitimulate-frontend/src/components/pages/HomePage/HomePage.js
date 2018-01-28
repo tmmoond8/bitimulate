@@ -7,7 +7,8 @@ const HomePage = () => {
   }
   return (
     <PageTemplate 
-      header={<Header/>}>
+      header={<Header/>}
+    >
       <PolyBackground>
         <Block style={style} center shadow>
           <h1>

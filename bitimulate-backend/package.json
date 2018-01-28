@@ -6,7 +6,10 @@
   "dependencies": {
     "autobahn": "^17.5.2",
     "axios": "^0.17.1",
+    "joi": "^13.1.1",
+    "jsonwebtoken": "^8.1.1",
     "koa": "^2.4.1",
+    "koa-bodyparser": "^4.2.0",
     "koa-router": "^7.3.0",
     "mongoose": "^4.13.9",
     "mongoose-double": "^0.0.1",
