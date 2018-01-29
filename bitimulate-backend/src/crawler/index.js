@@ -77,5 +77,5 @@ socket.handleMessage = (message) => {
     messageHandler[type](data);
   }
 }
-
+// registerInitialExchangeRate();
 socket.handleRefresh = updateEntireRate;
