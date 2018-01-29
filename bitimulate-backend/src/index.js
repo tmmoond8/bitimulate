@@ -5,6 +5,7 @@ const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
 const api = require('./api');
 const db = require('./db');
+const jwtMiddleware = require('lib/middlewares/jwt');
 
 db.connect();
 // load environment variables
@@ -14,6 +15,7 @@ const {
 
 const router = new Router();
 router.use('/api', api.routes());
+app.use(jwtMiddleware);
 app.use(bodyParser());
 app.use(router.routes());
 app.use(router.allowedMethods());

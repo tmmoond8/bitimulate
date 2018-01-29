@@ -16,4 +16,16 @@ function generateToken(playload, subject) {
   );
 }
 
+function decodeToken(token) {
+  return new Promise(
+    (resolve, reject) => {
+      Jwt.verify(token, secret, (error, decoded) => {
+        if (error) reject(error);
+        resolve(decoded);
+      });
+    }
+  );
+}
+
 exports.generateToken = generateToken;
+exports.decodeToken = decodeToken;

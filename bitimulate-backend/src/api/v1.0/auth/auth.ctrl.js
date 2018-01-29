@@ -69,7 +69,6 @@ exports.localLogin = async (ctx) => {
   try {
     // find user
     const user = await User.findByEmail(email);
-    console.log('user', user);
     if (!user) {
       // user does not exist
       ctx.status = 403;
@@ -77,7 +76,6 @@ exports.localLogin = async (ctx) => {
     }
 
     const validated = user.validatePassword(password);
-    console.log('validated', validated);
     if (!validated) {
       // wrong password
       ctx.status = 403;
@@ -89,11 +87,26 @@ exports.localLogin = async (ctx) => {
       maxAge: 1000 * 60 * 60 * 24 * 4
     });
 
-    cts.status = 200;
+    ctx.status = 200;
+    const { displayName, _id, metaInfo } = user;
     ctx.body = {
-      success: true
+      displayName,
+      _id,
+      metaInfo
     }
   } catch (e) {
     ctx.throw(e);
   }
 };
+
+exports.check = (ctx) => {
+  const { user } = ctx.request;
+  if (!user) {
+    ctx.status = 403;
+    return;
+  }
+
+  ctx.body = {
+    user
+  }
+}
