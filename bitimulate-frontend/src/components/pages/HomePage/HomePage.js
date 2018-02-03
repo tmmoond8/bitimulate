@@ -1,5 +1,6 @@
 import React from 'react';
-import { Header, PageTemplate, PolyBackground, Block } from 'components';
+import { PageTemplate, PolyBackground, Block } from 'components';
+import { HeaderContainer } from 'containers';;
 
 const HomePage = () => {
   const style = {
@@ -7,7 +8,7 @@ const HomePage = () => {
   }
   return (
     <PageTemplate 
-      header={<Header/>}
+      header={<HeaderContainer/>}
     >
       <PolyBackground>
         <Block style={style} center shadow>
