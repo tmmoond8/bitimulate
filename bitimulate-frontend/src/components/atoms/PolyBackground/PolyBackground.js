@@ -44,7 +44,7 @@ class PolyBackground extends Component {
           }
         )}>
         </div>
-        <div class={cx('inner')}>
+        <div className={cx('inner')}>
           {children}
         </div>
       </div>
