@@ -15,7 +15,7 @@ const ScreenMask = ({visible}) => {
         leave: cx('fade-leave')
       }}
       >
-        { visible && <div class={cx('screen-mask')}/> }
+        { visible && <div className={cx('screen-mask')}/> }
     </CSSTransitionGroup>
   );
 };
