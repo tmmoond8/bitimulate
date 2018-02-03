@@ -5,9 +5,9 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(styles);
 
 const ScreenMask = ({visible}) => {
+  if (!visible) return null;
   return (
-    <div className={cx('screen-mast')}>
-      HI...
+    <div className={cx('screen-mask')}>
     </div>
   );
 };
