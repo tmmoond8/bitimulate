@@ -16,6 +16,11 @@ const configureStore = (initialState) => {
     devtools()
   ];
   const store = createStore(modules, initialState, compose(...enhancers));
+
+  if (module.hot) {
+    module.hot.accept('./modules', () => store.replaceReducer(modules));
+  }
+
   return store;
 };
 

@@ -4,6 +4,20 @@ import Root from './Root';
 import './styles/main.scss';
 import registerServiceWorker from './registerServiceWorker';
 import configureStore from 'store/configure';
+import { AppContainer } from 'react-hot-loader';
 
-ReactDOM.render(<Root store={configureStore()}/>, document.getElementById('root'));
+const render = (Component) => ReactDOM.render(
+  (
+    <AppContainer>
+      <Component store={configureStore()}/>
+    </AppContainer>
+  ),
+  document.getElementById('root')
+);
+
+render(Root);
+
+if (module.hot) {
+  module.hot.accept('./Root', () => render(Root))
+}
 registerServiceWorker();
