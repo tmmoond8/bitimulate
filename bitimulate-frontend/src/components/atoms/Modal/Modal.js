@@ -12,15 +12,13 @@ class ModalWrapper extends Component {
     return (
       <div className={cx('modal-wrapper')}>
         <CSSTransitionGroup
-        transitionEnterTimeout={400}
-        transitionLeaveTimeout={400}
+          transitionEnterTimeout={400}
+          transitionLeaveTimeout={400}
           transitionName={{
             enter: cx('enter'),
             leave: cx('leave')
           }}>
-          { true && <div className={cx('modal')}>
-            {children}
-          </div> }
+          {visible && children}
         </CSSTransitionGroup>
       </div>
     )
