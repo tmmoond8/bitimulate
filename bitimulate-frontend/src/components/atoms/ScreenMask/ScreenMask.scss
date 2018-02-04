@@ -1,14 +1,14 @@
 @import 'utils';
 
 .fade-enter {
-  animation-duration: .3s;
+  animation-duration: .15s;
   animation-fill-mode: both;
   animation-timing-function: ease-in;
   animation-name: fadeIn;
 }
 
-.fade-exit {
-  animation-duration: .3s;
+.fade-leave {
+  animation-duration: .15s;
   animation-fill-mode: both;
   animation-timing-function: ease-out;
   animation-name: fadeOut;
@@ -21,5 +21,5 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(100, 100, 100, 0.7);
+  background: rgba(50, 50, 50, 0.7);
 }
