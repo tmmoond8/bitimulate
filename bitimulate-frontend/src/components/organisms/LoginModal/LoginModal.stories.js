@@ -2,20 +2,36 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 
 import LoginModal from './LoginModal';
-const forms = {
+const defaultForm = {
   login: {
-    email: "", 
-    password: ""
+    email: "tmmoond8@gmail.com", 
+    password: "xoalsxoals1231@"
   },
   register: {
-    email: "", 
-    password: "", 
-    dispalyName: ""
+    email: "tmmoond8@gmail.com", 
+    password: "xoalsxoals1231@",
+    dispalyName: "test"
+  }
+}
+const emailInvalidForm = {
+  login: {
+    email: "tmmoail.com", 
+    password: "xoalsxoals1231@"
+  },
+  register: {
+    email: "tmmoail.com", 
+    password: "xoalsxoals1231@",
+    dispalyName: "test"
   }
 }
 storiesOf('LoginModal', module)
   .add('default', () => (
     <LoginModal 
       visible
-      forms={forms}
+      form={defaultForm}
+    ></LoginModal>))
+  .add('invalid email', () => (
+    <LoginModal 
+      visible
+      form={emailInvalidForm}
     ></LoginModal>))

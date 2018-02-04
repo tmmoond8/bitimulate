@@ -5,6 +5,7 @@ import { LoginModal } from 'components';
 import onClickOutside from 'react-onclickoutside';
 import * as baseActions from 'store/modules/base';
 import * as authActions from 'store/modules/auth';
+import validate from 'validate';
 
 class LoginModalContainer extends Component {
   handleClickOutside = (event) => {
@@ -46,11 +47,15 @@ class LoginModalContainer extends Component {
         }
       }
     }
-    const forms = this.props.forms.toJS();
+    const form = this.props.form.toJS();
+    const error = validate(form, constraints);
     const { AuthActions } = this.props;
+    if (error) {
+      authActions.setError(error);
+    }
   }
   render() {
-    const  { visible, mode, forms } = this.props;
+    const  { visible, mode, form, error } = this.props;
     const { 
       handleChangeMode, 
       handleChangeInput, 
@@ -62,7 +67,8 @@ class LoginModalContainer extends Component {
       <LoginModal
         visible={visible}
         mode={mode}
-        forms={forms}
+        form={form}
+        error={error}
         onChangeInput={handleChangeInput}
         onChangeMode={handleChangeMode}/>
     )
@@ -73,7 +79,8 @@ export default connect(
   (state) => ({
     visible: state.auth.getIn(['modal', 'visible']),
     mode: state.auth.getIn(['modal', 'mode']),
-    forms: state.auth.get('forms'),
+    form: state.auth.get('form'),
+    error: state.auth.get('error')
   }),
   (dispatch) => ({
     BaseActions: bindActionCreators(baseActions, dispatch),

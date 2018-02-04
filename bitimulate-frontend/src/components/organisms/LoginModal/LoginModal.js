@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './LoginModal.scss';
 import classNames from 'classnames/bind';
 import { 
-  Modal, Input, Button, TextButton, SocialLoginButton
+  Modal, Input, Button, TextButton, SocialLoginButton, InputError
 } from 'components';
 
 const cx = classNames.bind(styles);
@@ -10,7 +10,8 @@ const cx = classNames.bind(styles);
 const LoginModal = ({
   visible,
   mode,
-  forms,
+  form,
+  error,
   onChangeInput,
   onChangeMode,
   onLogin,
@@ -20,7 +21,12 @@ const LoginModal = ({
   const modeText = isLogin ? '로그인' : '회원가입';
   const invertedText = isLogin ? '회원가입' : '로그인';
 
-  const { email, password } = forms;
+  console.log('error : ', error);
+  const { email, password } = form;
+  const {
+    email: emailError,
+    password: passwordError
+  } = error ? error.toJS() : {};
   const onButtonClick = isLogin ? onLogin : onRegister;
 
   return (
@@ -36,6 +42,7 @@ const LoginModal = ({
               name="email"
               fullWidth big
               placeholder="이메일"/>
+            <InputError error={emailError}/>
             <Input
               value={password}
               onChange={onChangeInput}
@@ -43,6 +50,7 @@ const LoginModal = ({
               fullWidth big
               placeholder="비밀번호"
               type="password"/>
+            <InputError error={passwordError}/>
           </div>
             {/* close form*/}
             <Button 
