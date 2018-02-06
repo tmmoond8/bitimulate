@@ -33,8 +33,8 @@ export default handleActions({
     return state.updateIn(['modal', 'visible'], visible => !visible);
   },
   [SET_MODAL_MODE]: (state, action) => {
-    return state.setIn(state, ['modal', 'mode'], action.payload)
-                .set('form', initialState.get('form').toJS())
+    return state.setIn(['modal', 'mode'], action.payload)
+                .set('form', initialState.get('form'))
                 .set('error', null)
   },
   [CHANGE_INPUT]: (state, action) => {
@@ -42,6 +42,7 @@ export default handleActions({
     return state.setIn(['form', name], value);
   },
   [SET_ERROR]: (state, action) => {
+    console.log('SET_ERROR');
     return state.set('error', fromJS(action.payload));
   }
 }, initialState);

@@ -1,37 +1,25 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
+import { fromJS } from 'immutable';
 
 import LoginModal from './LoginModal';
 const defaultForm = {
-  login: {
-    email: "tmmoond8@gmail.com", 
-    password: "xoalsxoals1231@"
-  },
-  register: {
-    email: "tmmoond8@gmail.com", 
-    password: "xoalsxoals1231@",
-    dispalyName: "test"
-  }
+  email: "tmmoond8@gmail.com", 
+  password: "xoalsxoals1231@"
 }
 const emailInvalidForm = {
-  login: {
-    email: "tmmoail.com", 
-    password: "xoalsxoals1231@"
-  },
-  register: {
-    email: "tmmoail.com", 
-    password: "xoalsxoals1231@",
-    dispalyName: "test"
-  }
+  email: "tmmail.com", 
+  password: "xoalsxoals1231@"
 }
 storiesOf('LoginModal', module)
   .add('default', () => (
     <LoginModal 
       visible
-      form={defaultForm}
+      form={fromJS(defaultForm)}
     ></LoginModal>))
   .add('invalid email', () => (
     <LoginModal 
       visible
-      form={emailInvalidForm}
+      form={fromJS(emailInvalidForm)}
+      error={fromJS({email:'invalid email format'})}
     ></LoginModal>))

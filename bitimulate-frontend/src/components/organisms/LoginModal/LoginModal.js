@@ -21,8 +21,7 @@ const LoginModal = ({
   const modeText = isLogin ? '로그인' : '회원가입';
   const invertedText = isLogin ? '회원가입' : '로그인';
 
-  console.log('error : ', error);
-  const { email, password } = form;
+  const { email, password } = form.toJS();
   const {
     email: emailError,
     password: passwordError
