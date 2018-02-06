@@ -23,6 +23,10 @@
     .login {
       margin-top: 0.5rem;
       margin-bottom: 0.5rem;
+      &:hover {
+        cursor: pointer;
+        @include material-shadow(2);
+      }
     }
     .login-foot {
       font-size: 0.85rem;

@@ -5,7 +5,7 @@ import { LoginModal } from 'components';
 import onClickOutside from 'react-onclickoutside';
 import * as baseActions from 'store/modules/base';
 import * as authActions from 'store/modules/auth';
-import validate from 'validate';
+import validate from 'validate.js';
 
 class LoginModalContainer extends Component {
   handleClickOutside = (event) => {
@@ -23,7 +23,7 @@ class LoginModalContainer extends Component {
     const { AuthActions } = this.props;
     const { name, value } = event.target;
 
-    AuthActions.handleChangeInput({
+    AuthActions.changeInput({
       name,
       value
     });
@@ -37,21 +37,22 @@ class LoginModalContainer extends Component {
     const constraints = {
       email: {
         email: {
-          message: () => `잘못된 형식의 이메일 입니다.`
+          message: () => `^잘못된 형식의 이메일 입니다.`
         }
       },
       password: {
         length: {
           minimum: 6,
-          tooShort: `비밀번호는 %{count}자 이상 입력하세요.`
+          tooShort: `^비밀번호는 %{count}자 이상 입력하세요.`
         }
       }
-    }
+    };
     const form = this.props.form.toJS();
     const error = validate(form, constraints);
+
     const { AuthActions } = this.props;
     if (error) {
-      authActions.setError(error);
+      AuthActions.setError(error);
     }
   }
   render() {
@@ -70,7 +71,9 @@ class LoginModalContainer extends Component {
         form={form}
         error={error}
         onChangeInput={handleChangeInput}
-        onChangeMode={handleChangeMode}/>
+        onChangeMode={handleChangeMode}
+        onLogin={handleLogin}
+        onRegister={handleRegister}/>
     )
   }
 }

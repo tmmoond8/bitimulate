@@ -8,11 +8,10 @@ const Button = ({
   children, 
   flex,
   className,
+  invert,
   roundCorner,
-  invert, 
   flat,
   color,
-  padding="0.5rem",
   style,
   ...rest
 }) => {
@@ -22,10 +21,10 @@ const Button = ({
         invert,
         flex,
         flat,
+        roundCorner
       }, color, className)
     }
     style={{
-      padding,
       ...style
     }}
       {...rest}>
