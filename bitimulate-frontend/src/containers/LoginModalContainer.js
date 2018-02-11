@@ -5,15 +5,21 @@ import { LoginModal } from 'components';
 import onClickOutside from 'react-onclickoutside';
 import * as baseActions from 'store/modules/base';
 import * as authActions from 'store/modules/auth';
+import * as registerActions from 'store/modules/register';
 import validate from 'validate.js';
 
 class LoginModalContainer extends Component {
   handleClickOutside = (event) => {
+    this.handleClose();
+  }
+
+  handleClose = () => {
     const { visible, BaseActions, AuthActions } = this.props;
     if (!visible) return;
     BaseActions.setScreenMaskVisiblity(false);
     AuthActions.toggleLoginModal();
   }
+
   handleChangeMode = () => {
     const { mode, AuthActions } = this.props;
     const inverted = mode === 'login' ? 'register' : 'login';
@@ -32,8 +38,11 @@ class LoginModalContainer extends Component {
     console.log('handleLogin');
   }
 
+  // FIXME async가 this에 접근이 안된다. 왜지..?
   handleRegister = () => {
-    // validate email and password
+    const { AuthActions, RegisterActions } = this.props;
+ +  AuthActions.setError(null);
+    // // validate email and password
     const constraints = {
       email: {
         email: {
@@ -50,10 +59,24 @@ class LoginModalContainer extends Component {
     const form = this.props.form.toJS();
     const error = validate(form, constraints);
 
-    const { AuthActions } = this.props;
     if (error) {
-      AuthActions.setError(error);
+      return AuthActions.setError(error);
     }
+
+    const checkEmailTransaction = async function(email) {
+      try {
+        const promise = await AuthActions.checkEmail(email);
+        if (!promise.data.exists) {
+          this.handleClose();
+          RegisterActions.show();
+        }
+      } catch(e) {
+        if (this.props.error) {
+          return;
+        }
+      }
+    }.bind(this);
+    checkEmailTransaction(form.email);
   }
   render() {
     const  { visible, mode, form, error } = this.props;
@@ -87,6 +110,7 @@ export default connect(
   }),
   (dispatch) => ({
     BaseActions: bindActionCreators(baseActions, dispatch),
-    AuthActions: bindActionCreators(authActions, dispatch)
+    AuthActions: bindActionCreators(authActions, dispatch),
+    RegisterActions: bindActionCreators(registerActions, dispatch)
   })
 )(onClickOutside(LoginModalContainer));
