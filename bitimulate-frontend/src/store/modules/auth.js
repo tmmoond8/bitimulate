@@ -1,18 +1,22 @@
 import { createAction, handleActions } from 'redux-actions';
 
 import { Map, fromJS } from 'immutable';
+import { pender } from 'redux-pender';
+import * as AuthAPI from 'lib/api/auth';
 
 // action types
 const TOGGLE_LOGIN_MODAL = 'auth/TOGGLE_LOGIN_MODAL';
 const SET_MODAL_MODE = 'auth/SET_MODAL_MODE';
 const CHANGE_INPUT = 'auth/CHANGE_INPUT';
 const SET_ERROR = 'auth/SET_ERROR';
+const CHECK_EMAIL = 'auth/CHECK_EMAIL';
 
 // action creator
 export const toggleLoginModal = createAction(TOGGLE_LOGIN_MODAL);
 export const setModalMode = createAction(SET_MODAL_MODE);
 export const changeInput = createAction(CHANGE_INPUT);
 export const setError = createAction(SET_ERROR);
+export const checkEmail = createAction(CHECK_EMAIL, AuthAPI.checkEmail);
 
 // initial state
 const initialState = Map({
@@ -42,7 +46,15 @@ export default handleActions({
     return state.setIn(['form', name], value);
   },
   [SET_ERROR]: (state, action) => {
-    console.log('SET_ERROR');
     return state.set('error', fromJS(action.payload));
-  }
+  },
+  ...pender({
+    type: CHECK_EMAIL,
+    onSuccess: (state, action) => {
+      const { exists } = action.payload.data;
+      return exists
+            ? state.set('error', Map({email: '이미 존재하는 이메일 입니다.'}))
+            : state;
+    }
+  }),
 }, initialState);

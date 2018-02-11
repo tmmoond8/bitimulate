@@ -8,6 +8,7 @@ import * as authActions from 'store/modules/auth';
 
 class HeaderContainer extends Component {
   handleLoginButtonClick = () => {
+    console.log('handleLoginButton');
     const { BaseActions, AuthActions } = this.props;
     BaseActions.setScreenMaskVisiblity(true);
     AuthActions.toggleLoginModal();

@@ -7,6 +7,7 @@ auth.get('/', (ctx) => {
   ctx.body = 'auth api';
 });
 
+auth.get('/check-email/:email', authCtrl.checkEmail);
 auth.post('/register/local', authCtrl.localRegister);
 auth.post('/login/local', authCtrl.localLogin);
 auth.post('/check', authCtrl.check);
