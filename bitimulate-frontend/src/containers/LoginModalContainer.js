@@ -7,6 +7,7 @@ import * as baseActions from 'store/modules/base';
 import * as authActions from 'store/modules/auth';
 import * as registerActions from 'store/modules/register';
 import validate from 'validate.js';
+import { withRouter } from 'react-router';
 
 class LoginModalContainer extends Component {
   handleClickOutside = (event) => {
@@ -68,7 +69,8 @@ class LoginModalContainer extends Component {
         const promise = await AuthActions.checkEmail(email);
         if (!promise.data.exists) {
           this.handleClose();
-          RegisterActions.show();
+          const { history } = this.props;
+          history.push('/register');
         }
       } catch(e) {
         if (this.props.error) {
@@ -113,4 +115,4 @@ export default connect(
     AuthActions: bindActionCreators(authActions, dispatch),
     RegisterActions: bindActionCreators(registerActions, dispatch)
   })
-)(onClickOutside(LoginModalContainer));
+)(withRouter(onClickOutside(LoginModalContainer)));
