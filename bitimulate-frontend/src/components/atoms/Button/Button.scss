@@ -7,14 +7,14 @@
   padding-right: 0.8rem;
   padding-left: 0.8rem;
   font-weight: 400;
-  background: material-color('grey', '300');
+  background: material-color('grey', '100');
   user-select: none;
 
   &:hover {
-    background: material-color('grey', '200');
+    background: material-color('grey', '100');
   }
   &:active {
-    background: material-color('grey', '300');
+    background: material-color('grey', '100');
   }
   &.roundCorner {
     border-radius: 6px;
@@ -65,14 +65,14 @@
     &.teal {
       color: white;
       background: material-color('teal', '300');
-      border: 1px solid material-color('teal', '400');
+      // border: 1px solid material-color('teal', '400');
       &:hover {
         background: material-color('teal', '200');
-        border: 1px solid material-color('teal', '300');
+        // border: 1px solid material-color('teal', '300');
       }
       &:active {
         background: material-color('teal', '400');
-        border: 1px solid material-color('teal', '500');
+        // border: 1px solid material-color('teal', '500');
       }
     }
   }
