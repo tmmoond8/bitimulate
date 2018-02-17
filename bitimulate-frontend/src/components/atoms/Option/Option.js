@@ -6,11 +6,11 @@ import CheckBoxIcon from 'react-icons/lib/md/check-box';
 
 const cx = classNames.bind(styles);
 
-const Option = ({children, active}) => {
+const Option = ({children, active, onSetInitialMoneyIndex}) => {
   return (
     <div className={cx('option', {
       active
-    })}>
+    })} onClick={onSetInitialMoneyIndex}>
       <div className={cx('check-box')}>
         <BlankIcon className={cx('blank')}/>
         <CheckBoxIcon className={cx('checked')}/>

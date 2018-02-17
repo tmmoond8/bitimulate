@@ -70,7 +70,10 @@ class LoginModalContainer extends Component {
         if (!promise.data.exists) {
           this.handleClose();
           const { history } = this.props;
-          history.push('/register');
+          setTimeout(() => {
+            history.push('/register');
+          }, 400);
+          
         }
       } catch(e) {
         if (this.props.error) {
