@@ -4,12 +4,18 @@ import classNames from 'classnames/bind';
 
 const cx = classNames.bind(styles);
 
-const Input = ({big, fullWidth, className, ...rest}) => {
+const Input = ({
+        big, 
+        fullWidth, 
+        className, 
+        onChange,
+        ...rest}) => {
   return (
     <input className={cx('input', {
-      big,
-      'full-width': fullWidth
-    }, className)} {...rest}/>
+            big,
+            'full-width': fullWidth
+        }, className
+    )} {...rest} onChange={onChange}/>
   );
 };
 
