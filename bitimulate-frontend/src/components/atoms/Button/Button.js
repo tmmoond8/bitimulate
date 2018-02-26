@@ -13,6 +13,7 @@ const Button = ({
   flat,
   color,
   style,
+  disabled,
   ...rest
 }) => {
   return (
@@ -21,6 +22,7 @@ const Button = ({
         invert,
         flex,
         flat,
+        disabled,
         roundCorner
       }, color, className)
     }
