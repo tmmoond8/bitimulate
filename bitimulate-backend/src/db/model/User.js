@@ -11,6 +11,11 @@ function hash(password) {
 const User = new Schema({
   displayName: String,
   email: String,
+  password: String, // optional
+  initialMoney: {
+    currency: String,
+    index: String
+  },
   social: {
     facebook: {
       id: String,
@@ -21,7 +26,6 @@ const User = new Schema({
       accessToken: String
     }
   },
-  password: String, // optional
   createAt: {
     type: Date,
     default: Date.now
@@ -49,11 +53,13 @@ User.statics.findExistancy = function({email, displayName}) {
   }).exec();
 }
 
-User.statics.localRegister = function({ displayName, email, password }) {
+User.statics.localRegister = function({ displayName, email, password, initialMoney }) {
+  console.log('db local register',initialMoney);
   const user = new this({
     displayName,
     email,
-    password: hash(password)
+    password: hash(password),
+    initialMoney
   });
   return user.save();
 }

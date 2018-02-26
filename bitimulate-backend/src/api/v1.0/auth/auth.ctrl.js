@@ -4,7 +4,6 @@ const token = require('lib/token');
 
 exports.checkEmail = async (ctx) => {
   const { email } = ctx.params;
-  console.log('email : ', email);
 
   if (!email) {
     ctx.status = 400;
@@ -22,21 +21,44 @@ exports.checkEmail = async (ctx) => {
   }
 };
 
+exports.checkDisplayName = async (ctx) => {
+  const { displayName } = ctx.params;
+  
+  if (!displayName) {
+    ctx.status = 400;
+    return;
+  }
+
+  try {
+    const account = await User.findByDisplayName(displayName);
+    ctx.body = {
+      exists: !! account
+    };
+  } catch (e) {
+    ctx.throw(e, 500);
+  }
+};
+
 exports.localRegister = async (ctx) => {
   const body = ctx.request.body;
   const schema = Joi.object({
     displayName: Joi.string().regex(/^[a-zA-Z0-9ㄱ-힣]{3,12}$/).required(),
     email: Joi.string().email().required(),
-    password: Joi.string().min(6).max(30)
+    password: Joi.string().min(6).max(30),
+    initialMoney: Joi.object({
+      currency: Joi.string().valid(['BTC', 'USD', 'KRW']).required(),
+      index: Joi.number().min(0).max(2).required()
+    }).required()
   });
   
   const result = Joi.validate(body, schema);
   if (result.error) {
     ctx.status = 400;
+    ctx.body = result.error;
     return;
   }
 
-  const { displayName, email, password }  = body;
+  const { displayName, email, password, initialMoney }  = body;
   try {
     // check email and displayName existancy
     const exists = await User.findExistancy({displayName, email});
@@ -49,9 +71,10 @@ exports.localRegister = async (ctx) => {
       return;
     }
     const user = await User.localRegister({
-      displayName, email, password
+      displayName, email, password, initialMoney
     });
     ctx.body = user;
+
     const accessToken = await user.generateToken();
     
     token.generateToken({
