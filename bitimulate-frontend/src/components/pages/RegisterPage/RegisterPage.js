@@ -3,13 +3,9 @@ import {
   PageTemplate, 
   RegisterTemplate,
   PolyBackground, 
-  Block, 
   Paper,
 } from 'components';
 import { HeaderContainer, RegisterFormContainer } from 'containers';
-import styles from  './RegisterPage.scss';
-import classNames from 'classnames/bind';
-const cx = classNames.bind(styles);
 
 class RegisterPage extends Component {
   state = {
@@ -20,8 +16,7 @@ class RegisterPage extends Component {
       this.setState({
         half: true
       });
-    })
-    
+    });
   }
 
   render() {

@@ -5,10 +5,8 @@ import {
   SectionWithTitle,
   Input,
   SelectCurrency,
-  Option,
   Button,
   AlignRight,
-  nickname,
   InitialMoneyOptions
 } from 'components';
 

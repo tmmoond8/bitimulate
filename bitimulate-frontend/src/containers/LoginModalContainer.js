@@ -41,7 +41,7 @@ class LoginModalContainer extends Component {
 
   // FIXME async가 this에 접근이 안된다. 왜지..?
   handleRegister = () => {
-    const { AuthActions, RegisterActions } = this.props;
+    const { AuthActions } = this.props;
  +  AuthActions.setError(null);
     // // validate email and password
     const constraints = {
