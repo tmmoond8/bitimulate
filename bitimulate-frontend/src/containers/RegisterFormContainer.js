@@ -18,6 +18,7 @@ class RegisterFormContainer extends Component {
 
   checkDisplayName = debounce((value) => {
     const { RegisterActions } = this.props;
+    RegisterActions.setError(null);
     RegisterActions.checkDisplayName(value);
   }, 500)
 
@@ -40,6 +41,12 @@ class RegisterFormContainer extends Component {
     const { nickname, currency, initialMoneyIndex, authForm, RegisterActions } = this.props;
     const { email, password } = authForm.toJS();
 
+    if(nickname.length < 1) {
+      RegisterActions.setError('닉네임을 입력하세요');
+      console.log('짧음');
+      return;
+    }
+
     RegisterActions.submit({
       displayName: nickname,
       email,
@@ -52,7 +59,7 @@ class RegisterFormContainer extends Component {
   }
 
   render() {
-    const { nickname, currency, initialMoneyIndex, displayNameExists } = this.props;
+    const { nickname, currency, initialMoneyIndex, error } = this.props;
     const { 
       handleChangeNickname,
       handleSetCurrency,
@@ -65,7 +72,7 @@ class RegisterFormContainer extends Component {
         nickname={nickname}
         currency={currency}
         initialMoneyIndex={initialMoneyIndex}
-        displayNameExists={displayNameExists}
+        error={error}
         onChangeNickname={handleChangeNickname}
         onSetCurrency={handleSetCurrency}
         onSetInitialMoneyIndex={handleSetInitialMoneyIndex}
@@ -82,7 +89,7 @@ export default connect(
     nickname: state.register.get('nickname'),
     currency: state.register.get('currency'),
     initialMoneyIndex: state.register.get('initialMoneyIndex'),
-    displayNameExists: state.register.get('displayNameExists')
+    error: state.register.get('error'),
   }),
   (dispatch) => ({
     RegisterActions: bindActionCreators(registerActions, dispatch)
