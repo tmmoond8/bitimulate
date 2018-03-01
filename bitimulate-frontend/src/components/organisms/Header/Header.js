@@ -1,12 +1,13 @@
 import React from 'react';
 import styles from './Header.scss';
 import classNames from 'classnames/bind';
-import { Logo, HeaderNav, Button } from 'components';
+import { Logo, HeaderNav, Button, UserButton } from 'components';
 
 const cx = classNames.bind(styles);
 
 const Header = ({
-  onLoginButtonClick
+  onLoginButtonClick,
+  user
 }) => {
   
   return (
@@ -17,13 +18,16 @@ const Header = ({
         </div>
         <div className={cx('right-side')}>
           <HeaderNav/>
-          <Button 
-            roundCorner 
-            invert 
-            className={cx('login-button')}
-            onClick={onLoginButtonClick}
-            >로그인
-          </Button>
+          {
+            user ? (<UserButton displayName={user.get('displayName')}></UserButton>)
+            : (<Button 
+                roundCorner 
+                invert 
+                className={cx('login-button')}
+                onClick={onLoginButtonClick}
+              >로그인
+            </Button>)
+          }
         </div>
       </div>
     </div>
