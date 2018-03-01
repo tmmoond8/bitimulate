@@ -44,7 +44,6 @@ export default handleActions({
     type: CHECK_DISPLAY_NAME,
     onSuccess: (state, action) => {
       const { exists } = action.payload.data;
-      console.log('check display', exists);
       return state.set('displayNameExists', exists);
     }
   }),

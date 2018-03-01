@@ -1,10 +1,6 @@
 import React from 'react';
-import styles from './InitialMoneyOptions.scss';
-import classNames from 'classnames/bind';
 import { Option } from 'components';
 import { optionsPerCurrency } from 'lib/variables';
-
-const cx = classNames.bind(styles);
 
 const multipliers = [1, 10, 100];
 
