@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const User = require('db/model/User');
+const User = require('db/models/User');
 const token = require('lib/token');
 const { optionsPerCurrency } = require('lib/variables');
 
@@ -140,7 +140,6 @@ exports.localLogin = async (ctx) => {
     ctx.body = {
       displayName,
       _id,
-      metaInfo
     }
   } catch (e) {
     ctx.throw(e, 500);
