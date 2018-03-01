@@ -1,6 +1,7 @@
 const Joi = require('joi');
 const User = require('db/model/User');
 const token = require('lib/token');
+const { optionsPerCurrency } = require('lib/variables');
 
 exports.checkEmail = async (ctx) => {
   const { email } = ctx.params;
@@ -70,8 +71,12 @@ exports.localRegister = async (ctx) => {
       };
       return;
     }
+    const initial = {
+      currency: initialMoney.currency,
+      value: optionsPerCurrency[initialMoney.currency].initialValue * Math.pow(10, initialMoney.index)
+    }
     const user = await User.localRegister({
-      displayName, email, password, initialMoney
+      displayName, email, password, initial
     });
     ctx.body = user;
 
