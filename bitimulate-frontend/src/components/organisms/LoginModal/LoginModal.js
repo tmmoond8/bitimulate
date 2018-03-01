@@ -24,7 +24,8 @@ const LoginModal = ({
   const { email, password } = form.toJS();
   const {
     email: emailError,
-    password: passwordError
+    password: passwordError,
+    localLogin: localLoginError,
   } = error ? error.toJS() : {};
   const onButtonClick = isLogin ? onLogin : onRegister;
 
@@ -34,6 +35,7 @@ const LoginModal = ({
         <div className={cx('bar')}/>
         <div className={cx('content')}>
           <h3>이메일로 {modeText}</h3>
+          <InputError error={localLoginError}/>
           <div className={cx('form')}>
             <Input
               value={email}

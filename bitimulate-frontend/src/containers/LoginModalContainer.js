@@ -8,6 +8,7 @@ import * as authActions from 'store/modules/auth';
 import * as registerActions from 'store/modules/register';
 import validate from 'validate.js';
 import { withRouter } from 'react-router';
+import * as userActions from 'store/modules/user';
 
 class LoginModalContainer extends Component {
   handleClickOutside = (event) => {
@@ -36,7 +37,23 @@ class LoginModalContainer extends Component {
     });
   }
   handleLogin = () => {
-    console.log('handleLogin');
+    const { AuthActions, UserActions, form } = this.props;
+    const { email, password } = form.toJS();
+
+    const asyncFn = async () => {
+      try {
+        await AuthActions.localLogin({
+          email, password
+        });
+        const { loginResult } = this.props;
+        UserActions.setUser(loginResult);
+        AuthActions.setError(null);
+        this.handleClose();
+      } catch(e) {
+        console.log(e);
+      }
+    }
+    asyncFn();
   }
 
   // FIXME async가 this에 접근이 안된다. 왜지..?
@@ -76,9 +93,7 @@ class LoginModalContainer extends Component {
           
         }
       } catch(e) {
-        if (this.props.error) {
-          return;
-        }
+        return;
       }
     }.bind(this);
     checkEmailTransaction(form.email);
@@ -111,11 +126,13 @@ export default connect(
     visible: state.auth.getIn(['modal', 'visible']),
     mode: state.auth.getIn(['modal', 'mode']),
     form: state.auth.get('form'),
-    error: state.auth.get('error')
+    error: state.auth.get('error'),
+    loginResult: state.auth.get('loginResult'),
   }),
   (dispatch) => ({
     BaseActions: bindActionCreators(baseActions, dispatch),
     AuthActions: bindActionCreators(authActions, dispatch),
-    RegisterActions: bindActionCreators(registerActions, dispatch)
+    RegisterActions: bindActionCreators(registerActions, dispatch),
+    UserActions: bindActionCreators(userActions, dispatch),
   })
 )(withRouter(onClickOutside(LoginModalContainer)));
