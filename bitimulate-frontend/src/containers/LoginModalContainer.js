@@ -9,6 +9,7 @@ import * as registerActions from 'store/modules/register';
 import validate from 'validate.js';
 import { withRouter } from 'react-router';
 import * as userActions from 'store/modules/user';
+import storage from 'lib/storage';
 
 class LoginModalContainer extends Component {
   handleClickOutside = (event) => {
@@ -46,6 +47,7 @@ class LoginModalContainer extends Component {
           email, password
         });
         const { loginResult } = this.props;
+        storage.set('__BTM_USER__', loginResult);
         UserActions.setUser(loginResult);
         AuthActions.setError(null);
         this.handleClose();
