@@ -4,7 +4,6 @@ import classNames from 'classnames/bind';
 import { Logo, HeaderNav, Button, UserButton } from 'components';
 
 const cx = classNames.bind(styles);
-
 const Header = ({
   onLoginButtonClick,
   user

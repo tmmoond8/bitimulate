@@ -25,8 +25,8 @@ const initialState = Map({
   nickname: '',
   currency: 'KRW',
   initialMoneyIndex: 0,
-  displayNameExists: false,
   error: null,
+  result: null,
 });
 
 // reducer
@@ -57,6 +57,17 @@ export default handleActions({
   ...pender({
     type: SUBMIT,
     onSuccess: (state, action) => {
+      const { data: user } = action.payload;
+      return state.set('result', user);
+    },
+    onFailure: (state, action) => {
+      const { status, data: { key } } = action.payload;
+      const handler = {
+        email: () => {
+          return state.set('redo', true);
+        }
+      };
+      if (status == 409 && key) return handler(key);
       return state;
     }
   })

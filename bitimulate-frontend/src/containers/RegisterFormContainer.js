@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { RegisterForm } from 'components';
 import * as registerActions from 'store/modules/register';
+import * as userActions from 'store/modules/user';
 import debounce from 'lodash/debounce';
 import { withRouter } from 'react-router';
 
@@ -38,7 +39,15 @@ class RegisterFormContainer extends Component {
   }
 
   handleSubmit = () => {
-    const { nickname, currency, initialMoneyIndex, authForm, RegisterActions } = this.props;
+    const { 
+      nickname, 
+      currency, 
+      initialMoneyIndex, 
+      authForm, 
+      RegisterActions,
+      UserActions,
+      history,
+    } = this.props;
     const { email, password } = authForm.toJS();
 
     if(nickname.length < 1) {
@@ -47,15 +56,25 @@ class RegisterFormContainer extends Component {
       return;
     }
 
-    RegisterActions.submit({
-      displayName: nickname,
-      email,
-      password,
-      initialMoney: {
-        currency,
-        index: initialMoneyIndex
+    const asyncFn = async () => {
+      try {
+        await RegisterActions.submit({
+          displayName: nickname,
+          email,
+          password,
+          initialMoney: {
+            currency,
+            index: initialMoneyIndex
+          }
+        });
+        const { result } = this.props;
+        UserActions.setUser(result);
+        history.push('/');
+      } catch (e) {
+        console.log(e);
       }
-    })
+    };
+    asyncFn();
   }
 
   render() {
@@ -90,8 +109,10 @@ export default connect(
     currency: state.register.get('currency'),
     initialMoneyIndex: state.register.get('initialMoneyIndex'),
     error: state.register.get('error'),
+    result: state.register.get('result'),
   }),
   (dispatch) => ({
-    RegisterActions: bindActionCreators(registerActions, dispatch)
+    RegisterActions: bindActionCreators(registerActions, dispatch),
+    UserActions: bindActionCreators(userActions, dispatch),
   })
 )(withRouter(RegisterFormContainer));
