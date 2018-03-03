@@ -67,7 +67,7 @@ export default handleActions({
           return state.set('redo', true);
         }
       };
-      if (status == 409 && key) return handler(key);
+      if (status === 409 && key) return handler(key);
       return state;
     }
   })
