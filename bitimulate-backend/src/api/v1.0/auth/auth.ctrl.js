@@ -146,6 +146,14 @@ exports.localLogin = async (ctx) => {
   }
 };
 
+exports.logout = (ctx) => {
+  ctx.cookies.set('access_token', null, {
+    maxAge: 0,
+    httpOnly: true
+  });
+  ctx.status = 204;
+};
+
 exports.check = (ctx) => {
   const { user } = ctx.request;
   if (!user) {
