@@ -9,7 +9,8 @@ const CHANGE_NICKNAME = 'register/CHANGE_NICKNAME';
 const SET_CURRENCY = 'register/SET_CURRENCY';
 const SET_INITIAL_MONEY_INDEX = 'register/SET_INITIAL_MONEY_INDEX';
 const CHECK_DISPLAY_NAME = 'CHECK_DISPLAY_NAME';
-const SUBMIT = 'SUBMIT';
+const SUBMIT = 'register/SUBMIT';
+const SUBMIT_SOCIAL = 'register/SUBMIT_SOCIAL';
 const SET_ERROR = 'SET_ERROR';
 
 // action creator 
@@ -18,6 +19,7 @@ export const setCurrency = createAction(SET_CURRENCY);
 export const setInitialMoneyIndex = createAction(SET_INITIAL_MONEY_INDEX);
 export const checkDisplayName = createAction(CHECK_DISPLAY_NAME, AuthAPI.checkDisplayName);
 export const submit = createAction(SUBMIT, AuthAPI.localRegister);
+export const submitSocial = createAction(SUBMIT_SOCIAL, AuthAPI.socialRegister);
 export const setError = createAction(SET_ERROR);
 
 // initial state
@@ -25,6 +27,8 @@ const initialState = Map({
   nickname: '',
   currency: 'KRW',
   initialMoneyIndex: 0,
+  provider: null,
+  socialId: null,
   error: null,
   result: null,
 });
@@ -70,5 +74,22 @@ export default handleActions({
       if (status === 409 && key) return handler(key);
       return state;
     }
-  })
+  }),
+  ...pender({
+    type: SUBMIT_SOCIAL,
+    onSuccess: (state, action) => {
+      const { data: user } = action.payload;
+      return state.set('result', user);
+    },
+    onFailure: (state, action) => {
+      const { status, data: { key } } = action.payload;
+      const handler = {
+        email: () => {
+          return state.set('redo', true);
+        }
+      };
+      if (status === 409 && key) return handler(key);
+      return state;
+    }
+  }),
 }, initialState);
