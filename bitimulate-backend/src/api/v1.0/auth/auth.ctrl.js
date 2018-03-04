@@ -2,6 +2,7 @@ const Joi = require('joi');
 const User = require('db/models/User');
 const token = require('lib/token');
 const { optionsPerCurrency } = require('lib/variables');
+const { getProfile } = require('lib/social');
 
 exports.checkEmail = async (ctx) => {
   const { email } = ctx.params;
@@ -143,6 +144,34 @@ exports.localLogin = async (ctx) => {
     }
   } catch (e) {
     ctx.throw(e, 500);
+  }
+};
+
+exports.socialLogin = async (ctx) => {
+  const schema = Joi.object().keys({
+    accessToken: Joi.string().required()
+  });
+  const result = Joi.validate(ctx.request.body, schema);
+
+  if (result.error) {
+    ctx.status = 400;
+    return;
+  }
+
+  const { provider } = ctx.params;
+  const { accessToken } = ctx.request.body;
+
+  let profile = null;
+  try {
+    profile = await getProfile(provider, accessToken);
+    // console.log('profile', profile);
+    ctx.body = {
+      profile
+    };
+  } catch(e) {
+    ctx.status = 403;
+    console.log(e);
+    return;
   }
 };
 

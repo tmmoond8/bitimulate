@@ -6,6 +6,8 @@
   "dependencies": {
     "autobahn": "^17.5.2",
     "axios": "^0.17.1",
+    "fb": "^2.0.0",
+    "googleapis": "^27.0.0",
     "joi": "^13.1.1",
     "jsonwebtoken": "^8.1.1",
     "koa": "^2.4.1",
