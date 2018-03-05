@@ -94,6 +94,24 @@ User.statics.localRegister = function({ displayName, email, password, initial })
   return user.save();
 }
 
+User.statics.socialRegister = function({ displayName, email, provider, socialId, initial }) {
+  const user = new this({
+    displayName,
+    email,
+    socialId,
+    metaInfo: {
+      initial
+    }
+  });
+  // sets initial money
+  const { currency, value } = initial;
+  user.wallet[currency] = value;
+  user.social[provider] = {
+    id: socialId
+  }
+  
+  return user.save();
+}
 User.methods.validatePassword = function(password) {
   const hashed = hash(password);
   return this.password === hashed;

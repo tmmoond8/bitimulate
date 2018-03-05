@@ -17,7 +17,6 @@ exports.checkEmail = async (ctx) => {
     ctx.body = {
       exists: !!account
     };
-    console.log(account);
   } catch(e) {
     ctx.throw(e, 500);
   }
@@ -99,6 +98,91 @@ exports.localRegister = async (ctx) => {
   }
 };
 
+exports.socialRegister = async (ctx) => {
+  const { body } = ctx.request;
+  const schema = Joi.object().keys({
+    displayName: Joi.string().regex(/^[a-zA-Z0-9ㄱ-힣]{3,12}$/).required(),
+    provider: Joi.string().valid(['facebook', 'google']).required(),
+    providerToken: Joi.string().required(),
+    initialMoney: Joi.object({
+      currency: Joi.string().valid(['BTC', 'USD', 'KRW']).required(),
+      index: Joi.number().min(0).max(2).required()
+    }).required()
+  });
+
+  const result = Joi.validate(body, schema);
+  if (result.error) {
+    ctx.status = 400;
+    ctx.body = result.error;
+    return;
+  }
+
+  const { 
+    displayName, 
+    email, 
+    provider, 
+    providerToken, 
+    initialMoney 
+  }  = body;
+
+
+  let profile = null;
+  try {
+    profile = await getProfile(provider, providerToken);
+  } catch(e) {
+    ctx.status = 403;
+    return;
+  }
+
+  if (!profile) {
+    ctx.status = 403;
+    return;
+  }
+
+  try {
+    // check email and displayName existancy
+    const exists = await User.findExistancy({
+      displayName, 
+      email: profile.email
+    });
+    if (exists) {
+      ctx.status = 409;
+      const key = exists.email === email ? 'email' : 'displayName';
+      ctx.body = {
+        key
+      };
+      return;
+    }
+    const initial = {
+      currency: initialMoney.currency,
+      value: optionsPerCurrency[initialMoney.currency].initialValue * Math.pow(10, initialMoney.index)
+    }
+    const user = await User.socialRegister({
+      displayName, 
+      email, 
+      provider, 
+      initial,
+      socialId: profile.id
+    });
+    ctx.body = user;
+
+    const accessToken = await user.generateToken();
+    
+    token.generateToken({
+      user: {
+        _id: user._id,
+        displayName: user.displayName
+      }
+    }, 'user');
+
+    // set access token
+    ctx.cookies.set('access_token', accessToken, {
+      maxAge: 1000 * 60 * 60 * 24 * 7
+    });
+  } catch (e) {
+    ctx.throw(e, 500);
+  }
+}
 
 exports.localLogin = async (ctx) => {
   const { body } = ctx.request;
@@ -164,14 +248,55 @@ exports.socialLogin = async (ctx) => {
   let profile = null;
   try {
     profile = await getProfile(provider, accessToken);
-    // console.log('profile', profile);
-    ctx.body = {
-      profile
-    };
+    if (!profile) {
+      throw('profile is empty');
+    }
   } catch(e) {
     ctx.status = 403;
     console.log(e);
     return;
+  }
+
+  const {
+    id, eamil
+  } = profile;
+
+  // check account existancy
+  let user = null;
+  try {
+    user = await User.findSocialId({provider, id});
+  } catch(e) {
+    ctx.throw(e, 500);
+  }
+
+  if (user) {
+    // TODO. JWT를 사용하여 accessToken을 생성
+    return;
+  }
+  
+  let duplicated = null;
+  if (!user && profile.emali) {
+    try {
+      duplicated = await user.findByEmail(email);
+    } catch(e) {
+      ctx.throw(e, 500);
+    }
+  }
+
+  if (duplicated) {
+    duplicated.social[provider] = {
+      id,
+    };
+    try {
+      await duplicated.save();
+    } catch(e) {
+      ctx.throw(e, 500);
+    }
+    // TODO: set JWT and return account info
+  }
+
+  if (!user) {
+    ctx.status = 204;
   }
 };
 

@@ -17,10 +17,12 @@ const RegisterForm = ({
   currency,
   initialMoneyIndex,
   error,
+  provider,
   onChangeNickname,
   onSetCurrency,
   onSetInitialMoneyIndex,
   onSubmit,
+  onSocialSubmit,
   onNicknameBlur
 }) => {
   return (
@@ -51,7 +53,7 @@ const RegisterForm = ({
           color={!!error ? 'none' : 'teal'} 
           className={cx('register-button')} 
           style={{padding: '0.5rem 2rem'}}
-          onClick={onSubmit}
+          onClick={provider ? ()=>onSocialSubmit(provider) : onSubmit}
         >
           가입
         </Button>
