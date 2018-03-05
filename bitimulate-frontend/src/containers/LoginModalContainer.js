@@ -59,7 +59,7 @@ class LoginModalContainer extends Component {
   }
 
   handleSocialLogin = (provider) => {
-    const { AuthActions } = this.props;
+    const { AuthActions, UserActions } = this.props;
 
     const asyncFn = async() => {
       try {
@@ -67,12 +67,17 @@ class LoginModalContainer extends Component {
         const { socialInfo } = this.props
         await AuthActions.socialLogin({
           provider, 
-          accessToken: socialInfo.get('accessToken')
+          providerToken: socialInfo.get('accessToken')
         });
 
-        const { redirectToRegister } = this.props;
-
-        if (redirectToRegister) {
+        const { loginResult } = this.props;
+        console.log('loginResult', loginResult);
+        if (loginResult) {
+          storage.set('__BTM_USER__', loginResult);
+          UserActions.setUser(loginResult);
+          AuthActions.setError(null);
+          this.handleClose();
+        } else {
           this.handleClose();
           const { history } = this.props;
           setTimeout(() => {
@@ -162,7 +167,6 @@ export default connect(
     error: state.auth.get('error'),
     loginResult: state.auth.get('loginResult'),
     socialInfo: state.auth.get('socialInfo'),
-    redirectToRegister: state.auth.getIn(['socialInfo', 'provider']),
   }),
   (dispatch) => ({
     BaseActions: bindActionCreators(baseActions, dispatch),
