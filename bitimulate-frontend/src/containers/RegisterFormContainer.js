@@ -77,14 +77,54 @@ class RegisterFormContainer extends Component {
     asyncFn();
   }
 
+  handleSocialSubmit = () => {
+    const { 
+      nickname, 
+      currency, 
+      initialMoneyIndex, 
+      RegisterActions,
+      UserActions,
+      history,
+      provider,
+      providerToken,
+    } = this.props;
+
+    if(nickname.length < 1) {
+      RegisterActions.setError('닉네임을 입력하세요');
+      console.log('짧음');
+      return;
+    }
+
+    const asyncFn = async () => {
+      try {
+        await RegisterActions.submitSocial({
+          displayName: nickname,
+          provider,
+          providerToken,
+          initialMoney: {
+            currency,
+            index: initialMoneyIndex
+          }
+        });
+        const { result } = this.props;
+        UserActions.setUser(result);
+        history.push('/');
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    asyncFn();
+  }
+
   render() {
-    const { nickname, currency, initialMoneyIndex, error } = this.props;
+    const { nickname, currency, initialMoneyIndex, error, provider, providerToken } = this.props;
     const { 
       handleChangeNickname,
       handleSetCurrency,
       handleNicknameBlur,
       handleSetInitialMoneyIndex,
-      handleSubmit
+      handleSubmit,
+      handleSocialSubmit
     } = this;
     return (
       <RegisterForm
@@ -92,10 +132,12 @@ class RegisterFormContainer extends Component {
         currency={currency}
         initialMoneyIndex={initialMoneyIndex}
         error={error}
+        provider={provider}
         onChangeNickname={handleChangeNickname}
         onSetCurrency={handleSetCurrency}
         onSetInitialMoneyIndex={handleSetInitialMoneyIndex}
         onSubmit={handleSubmit}
+        onSocialSubmit={handleSocialSubmit}
         onNicknameBlur={handleNicknameBlur}
       />
     )
@@ -110,6 +152,8 @@ export default connect(
     initialMoneyIndex: state.register.get('initialMoneyIndex'),
     error: state.register.get('error'),
     result: state.register.get('result'),
+    provider: state.auth.getIn(['socialInfo', 'provider']),
+    providerToken: state.auth.getIn(['socialInfo', 'accessToken']),
   }),
   (dispatch) => ({
     RegisterActions: bindActionCreators(registerActions, dispatch),

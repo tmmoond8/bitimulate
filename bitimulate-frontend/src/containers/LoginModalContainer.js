@@ -58,6 +58,34 @@ class LoginModalContainer extends Component {
     asyncFn();
   }
 
+  handleSocialLogin = (provider) => {
+    const { AuthActions } = this.props;
+
+    const asyncFn = async() => {
+      try {
+        await AuthActions.requestAccessToken(provider);
+        const { socialInfo } = this.props
+        await AuthActions.socialLogin({
+          provider, 
+          accessToken: socialInfo.get('accessToken')
+        });
+
+        const { redirectToRegister } = this.props;
+
+        if (redirectToRegister) {
+          this.handleClose();
+          const { history } = this.props;
+          setTimeout(() => {
+            history.push('/register');
+          }, 400);
+        }
+      } catch(e) {
+        console.log(e);
+      }
+    }
+    asyncFn();
+  }
+
   // FIXME async가 this에 접근이 안된다. 왜지..?
   handleRegister = () => {
     const { AuthActions } = this.props;
@@ -106,7 +134,8 @@ class LoginModalContainer extends Component {
       handleChangeMode, 
       handleChangeInput, 
       handleLogin, 
-      handleRegister 
+      handleRegister,
+      handleSocialLogin,
     } = this;
 
     return (
@@ -118,7 +147,9 @@ class LoginModalContainer extends Component {
         onChangeInput={handleChangeInput}
         onChangeMode={handleChangeMode}
         onLogin={handleLogin}
-        onRegister={handleRegister}/>
+        onRegister={handleRegister}
+        onSocialLogin={handleSocialLogin}
+      />
     )
   }
 }
@@ -130,6 +161,8 @@ export default connect(
     form: state.auth.get('form'),
     error: state.auth.get('error'),
     loginResult: state.auth.get('loginResult'),
+    socialInfo: state.auth.get('socialInfo'),
+    redirectToRegister: state.auth.getIn(['socialInfo', 'provider']),
   }),
   (dispatch) => ({
     BaseActions: bindActionCreators(baseActions, dispatch),
