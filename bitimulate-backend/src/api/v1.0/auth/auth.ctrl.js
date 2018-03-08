@@ -236,7 +236,6 @@ exports.socialLogin = async (ctx) => {
     providerToken: Joi.string().required()
   });
   const result = Joi.validate(ctx.request.body, schema);
-  console.log('result', result);
   if (result.error) {
     ctx.status = 400;
     return;
@@ -248,7 +247,6 @@ exports.socialLogin = async (ctx) => {
   let profile = null;
   try {
     profile = await getProfile(provider, providerToken);
-    console.log('profile', profile);
     if (!profile) {
       throw('profile is empty');
     }
@@ -266,7 +264,6 @@ exports.socialLogin = async (ctx) => {
   let user = null;
   try {
     user = await User.findSocialId({provider, id});
-    console.log('user', user);
   } catch(e) {
     ctx.throw(e, 500);
   }
@@ -296,7 +293,7 @@ exports.socialLogin = async (ctx) => {
       ctx.throw(e, 500);
     }
   }
-
+두
   if (duplicated) {
     duplicated.social[provider] = {
       id,

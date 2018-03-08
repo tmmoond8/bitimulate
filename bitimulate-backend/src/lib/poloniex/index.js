@@ -1,8 +1,11 @@
-const currencyPairMap = require('./currencyPairMap');
+const { currencyPairMap, maxCurrencyId  } = require('./currencyPairMap');
 const axios = require('axios');
 
 module.exports = (function () {
   function getCurrentPairName(id) {
+    if (parseInt(maxCurrencyId) > 200) {
+      return 'NULL_NULL';
+    }
     return currencyPairMap[id].toString();
   }
   function getTickers() {
