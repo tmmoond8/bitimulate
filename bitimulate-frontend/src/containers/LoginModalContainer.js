@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { LoginModal } from 'components';
+import { LoginModal, DimmerSpinner } from 'components';
 import onClickOutside from 'react-onclickoutside';
 import * as baseActions from 'store/modules/base';
 import * as authActions from 'store/modules/auth';
@@ -59,7 +59,7 @@ class LoginModalContainer extends Component {
   }
 
   handleSocialLogin = (provider) => {
-    const { AuthActions } = this.props;
+    const { AuthActions, UserActions } = this.props;
 
     const asyncFn = async() => {
       try {
@@ -67,17 +67,23 @@ class LoginModalContainer extends Component {
         const { socialInfo } = this.props
         await AuthActions.socialLogin({
           provider, 
-          accessToken: socialInfo.get('accessToken')
+          providerToken: socialInfo.get('accessToken')
         });
 
-        const { redirectToRegister } = this.props;
-
-        if (redirectToRegister) {
+        const { loginResult } = this.props;
+        console.log('loginResult', loginResult);
+        if (loginResult) {
+          storage.set('__BTM_USER__', loginResult);
+          UserActions.setUser(loginResult);
+          AuthActions.setError(null);
+          this.handleClose();
+        } else {
           this.handleClose();
           const { history } = this.props;
           setTimeout(() => {
             history.push('/register');
           }, 400);
+          return;
         }
       } catch(e) {
         console.log(e);
@@ -129,7 +135,7 @@ class LoginModalContainer extends Component {
     checkEmailTransaction(form.email);
   }
   render() {
-    const  { visible, mode, form, error } = this.props;
+    const  { visible, mode, form, error, pending } = this.props;
     const { 
       handleChangeMode, 
       handleChangeInput, 
@@ -139,7 +145,8 @@ class LoginModalContainer extends Component {
     } = this;
 
     return (
-      <LoginModal
+      <div>
+        <LoginModal
         visible={visible}
         mode={mode}
         form={form}
@@ -149,7 +156,9 @@ class LoginModalContainer extends Component {
         onLogin={handleLogin}
         onRegister={handleRegister}
         onSocialLogin={handleSocialLogin}
-      />
+        />
+        <DimmerSpinner visible={pending}/>
+      </div>
     )
   }
 }
@@ -162,7 +171,9 @@ export default connect(
     error: state.auth.get('error'),
     loginResult: state.auth.get('loginResult'),
     socialInfo: state.auth.get('socialInfo'),
-    redirectToRegister: state.auth.getIn(['socialInfo', 'provider']),
+    pending: state.pender.pending['LOCAL_LOGIN'] 
+      || state.pender.pending['auth/SOCIAL_LOGIN']
+      || state.pender.pending['auth/PROVIDER_LOGIN']
   }),
   (dispatch) => ({
     BaseActions: bindActionCreators(baseActions, dispatch),

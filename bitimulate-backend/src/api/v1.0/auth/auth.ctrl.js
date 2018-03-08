@@ -233,21 +233,20 @@ exports.localLogin = async (ctx) => {
 
 exports.socialLogin = async (ctx) => {
   const schema = Joi.object().keys({
-    accessToken: Joi.string().required()
+    providerToken: Joi.string().required()
   });
   const result = Joi.validate(ctx.request.body, schema);
-
   if (result.error) {
     ctx.status = 400;
     return;
   }
 
   const { provider } = ctx.params;
-  const { accessToken } = ctx.request.body;
+  const { providerToken } = ctx.request.body;
 
   let profile = null;
   try {
-    profile = await getProfile(provider, accessToken);
+    profile = await getProfile(provider, providerToken);
     if (!profile) {
       throw('profile is empty');
     }
@@ -271,6 +270,18 @@ exports.socialLogin = async (ctx) => {
 
   if (user) {
     // TODO. JWT를 사용하여 accessToken을 생성
+    const accessToken = await user.generateToken();
+    ctx.cookies.set('access_token', accessToken, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 4
+    });
+
+    ctx.status = 200;
+    const { displayName, _id, metaInfo } = user;
+    ctx.body = {
+      displayName,
+      _id,
+    }
     return;
   }
   
@@ -282,7 +293,7 @@ exports.socialLogin = async (ctx) => {
       ctx.throw(e, 500);
     }
   }
-
+두
   if (duplicated) {
     duplicated.social[provider] = {
       id,

@@ -1,4 +1,4 @@
-module.exports = {
+const currencyPairMap = {
   '7':'BTC_BCN',
   '8':'BTC_BELA',
   '10':'BTC_BLK',
@@ -99,3 +99,6 @@ module.exports = {
   '199':'ETH_GAS',
   '200':'BTC_STORJ'
 }
+const maxCurrencyId = Object.keys(currencyPairMap).sort((a, b) => b - a)[0];
+module.exports = currencyPairMap;
+module.exports = maxCurrencyId;

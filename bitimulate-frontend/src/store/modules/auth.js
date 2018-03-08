@@ -23,7 +23,7 @@ export const setError = createAction(SET_ERROR);  // ({email, password}) [nullab
 export const checkEmail = createAction(CHECK_EMAIL, AuthAPI.checkEmail);  // (email)
 export const localLogin = createAction(LOCAL_LOGIN, AuthAPI.localLogin);  // ({email, password})
 export const requestAccessToken = createAction(REQUEST_ACCESS_TOKEN, (provider) => social[provider](), provider => provider);  // ({provider})
-export const socialLogin = createAction(SOCIAL_LOGIN,  AuthAPI.socialLogin); // ({provider, accessToken})
+export const socialLogin = createAction(SOCIAL_LOGIN,  AuthAPI.socialLogin); // ({provider, providerToken})
 
 // initial state
 const initialState = Map({
