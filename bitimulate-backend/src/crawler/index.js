@@ -3,11 +3,38 @@ require('dotenv').config();
 const poloniex = require('../lib/poloniex');
 const db = require('db');
 const ExchangeRate = require('db/models/ExchangeRate');
+const ChartData = require('db/models/chartData');
 const socket = require('./socket');
 const { parseJSON, polyfill } = require('../lib/common');
+const { currencyPairMap } = require('lib/poloniex/currencyPairMap');
 
-db.connect();
-socket.connect();
+const initialize = async() => {
+  db.connect();
+  socket.connect();
+  await importInitialCharData();
+}
+
+async function importInitialCharData() {
+  const currencyPairs = [];
+  for (let key in currencyPairMap) {
+    currencyPairs.push(currencyPairMap[key]);
+  }
+
+  const requests = currencyPairs.map((currencyPairs) => () => poloniex.getChartData(currencyPairs))
+
+  for (let i = 0; i < Math.ceil(currencyPairs.length / 10); i++) {
+    const promises = requests.slice(i * 10, i * 10 + 10).map(thunk => thunk());
+    console.log(`${i * 10} ~ ${i * 10 + 10} start`);
+    console.log(currencyPairs.slice(i * 10, i * 10 + 10).join(', '));
+    try {
+      await Promise.all(promises);
+    } catch(e) {
+      console.log('error!');
+      return;
+    }
+  }
+  console.log(`${currencyPairs.length} items updated`);
+}
 
 async function registerInitialExchangeRate() {
   const tickers = await poloniex.getTickers();
@@ -52,18 +79,18 @@ async function updateEntireRate() {
 
 const messageHandler = {
   1002: async (data) => {
-    if (!data) return;
-    const converted = poloniex.convertToTickerObject(data);
-    const { name } = converted;
-    const rest = polyfill.objectWithoutProperties(converted, 'name');
+    // if (!data) return;
+    // const converted = poloniex.convertToTickerObject(data);
+    // const { name } = converted;
+    // const rest = polyfill.objectWithoutProperties(converted, 'name');
     
-    try {
-      const updated = await ExchangeRate.updateTicker(name, rest);
-      console.log('[Update]', name, new Date());
-    } catch (e) {
-      console.error(e);
-    }
-    console.log('-------------------------------------------');
+    // try {
+    //   const updated = await ExchangeRate.updateTicker(name, rest);
+    //   console.log('[Update]', name, new Date());
+    // } catch (e) {
+    //   console.error(e);
+    // }
+    // console.log('-------------------------------------------');
   }
 }
 
@@ -79,3 +106,5 @@ socket.handleMessage = (message) => {
 }
 // registerInitialExchangeRate();
 socket.handleRefresh = updateEntireRate;
+
+initialize();

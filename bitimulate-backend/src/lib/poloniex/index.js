@@ -13,7 +13,12 @@ module.exports = (function () {
      response => response.data
     );
   }
-  
+
+  function getChartData(currencyPair, period = 86400, start = 1420070400) {
+    return axios.get(`https://poloniex.com/public?command=returnChartData&currencyPair=${currencyPair}&start=${start}&end=9999999999&period=${period}`)
+            .then(response => response.data);
+  }
+
   const obj = {};
   function convertToTickerObject(data) {
     const keys = [
@@ -39,6 +44,7 @@ module.exports = (function () {
   return {
     getCurrentPairName,
     getTickers,
-    convertToTickerObject
+    convertToTickerObject,
+    getChartData,
   }
 })();
