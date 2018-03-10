@@ -293,7 +293,7 @@ exports.socialLogin = async (ctx) => {
       ctx.throw(e, 500);
     }
   }
-두
+
   if (duplicated) {
     duplicated.social[provider] = {
       id,

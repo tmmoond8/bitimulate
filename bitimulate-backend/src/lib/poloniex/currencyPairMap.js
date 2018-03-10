@@ -100,5 +100,7 @@ const currencyPairMap = {
   '200':'BTC_STORJ'
 }
 const maxCurrencyId = Object.keys(currencyPairMap).sort((a, b) => b - a)[0];
-module.exports = currencyPairMap;
-module.exports = maxCurrencyId;
+module.exports = {
+  currencyPairMap,
+  maxCurrencyId
+};
