@@ -24,13 +24,15 @@ const ExchangeRate = new Schema({
 
 // only for temporary
 ExchangeRate.statics.drop = function () {
-  return this.remove({}).exec();
+  return this.remove({});
 }
 
 ExchangeRate.index({name: 1}, {name: 'rateTypeIdentifier', unique: true});
 
 ExchangeRate.statics.updateTicker = function(name, data) {
-  return this.findOneAndUpdate({name}, {data, lastUpdate: new Date()}, { upsert: false, new: true}).exec();
+  return this.findOneAndUpdate({name}, {data, lastUpdate: new Date()}, { upsert: false, new: true});
 };
-
+ExchangeRate.statics.getCount = function() {
+  return this.count();
+}
 module.exports = mongoose.model('ExchangeRate', ExchangeRate);
