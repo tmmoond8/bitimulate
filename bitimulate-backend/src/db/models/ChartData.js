@@ -15,8 +15,15 @@ const ChartData = new Schema({
   weightedAverage: Double
 });
 
-ChartData.statics.massImport = function(data) {
-  const converted = data.map(data => data.date ** 1000);
+ChartData.statics.drop = function() {
+  return this.remove();
+}
+
+ChartData.statics.massImport = function(name, data) {
+  const converted = data.map(data => Object.assign({}, data, {
+    date: data.date * 1000,
+    name
+  }));
   return this.create(converted);
 }
 

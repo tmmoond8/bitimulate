@@ -7,33 +7,21 @@ const ChartData = require('db/models/chartData');
 const socket = require('./socket');
 const { parseJSON, polyfill } = require('../lib/common');
 const { currencyPairMap } = require('lib/poloniex/currencyPairMap');
+const Progress = require('cli-progress');
+const that = this;
 
-const initialize = async() => {
+const initialize = async (registerInitialExchangeRate) => {
   db.connect();
+  const itemCount = await ExchangeRate.getCount();
+  if (itemCount < 10) {
+    registerInitialExchangeRate();
+  }
+  await ChartData.drop();
+  await importData();
+  const current = (new Date()) / 1000;
+  await importData(300, current - 60 * 60 * 24 * 30);
+  await importData(300, (new Date()) / 1000);
   socket.connect();
-  await importInitialCharData();
-}
-
-async function importInitialCharData() {
-  const currencyPairs = [];
-  for (let key in currencyPairMap) {
-    currencyPairs.push(currencyPairMap[key]);
-  }
-
-  const requests = currencyPairs.map((currencyPairs) => () => poloniex.getChartData(currencyPairs))
-
-  for (let i = 0; i < Math.ceil(currencyPairs.length / 10); i++) {
-    const promises = requests.slice(i * 10, i * 10 + 10).map(thunk => thunk());
-    console.log(`${i * 10} ~ ${i * 10 + 10} start`);
-    console.log(currencyPairs.slice(i * 10, i * 10 + 10).join(', '));
-    try {
-      await Promise.all(promises);
-    } catch(e) {
-      console.log('error!');
-      return;
-    }
-  }
-  console.log(`${currencyPairs.length} items updated`);
 }
 
 async function registerInitialExchangeRate() {
@@ -58,6 +46,34 @@ async function registerInitialExchangeRate() {
   }
 }
 
+async function importData(period, start) {
+  console.log('loading chart data...');
+  const bar = new Progress.Bar({}, Progress.Presets.shades_classic);
+  const currencyPairs = [];
+  let current = 0;
+  for (let key in currencyPairMap) {
+    currencyPairs.push(currencyPairMap[key]);
+  }
+
+  bar.start(currencyPairs.lenght, 0);
+  bar.update(0);
+  const requests = currencyPairs.map((currencyPair) => () => poloniex.getChartData(currencyPair, period, start).then(
+    (data) => ChartData.massImport(currencyPair, data)
+  ));
+
+  for(let i = 0; i < Math.ceil(currencyPairs.length / 6); i++) {
+    const promises = requests.slice(i * 6, i * 6 + 6).map(thunk => thunk());
+    try {
+      await Promise.all(promises);
+      current += promises.length;
+      bar.update(current);
+    } catch(e) {
+      console.log('error!');
+    }
+  }
+  bar.stop();
+}
+
 async function updateEntireRate() {
   const tickers = await poloniex.getTickers();
   const keys = Object.keys(tickers);
@@ -79,18 +95,18 @@ async function updateEntireRate() {
 
 const messageHandler = {
   1002: async (data) => {
-    // if (!data) return;
-    // const converted = poloniex.convertToTickerObject(data);
-    // const { name } = converted;
-    // const rest = polyfill.objectWithoutProperties(converted, 'name');
+    if (!data) return;
+    const converted = poloniex.convertToTickerObject(data);
+    const { name } = converted;
+    const rest = polyfill.objectWithoutProperties(converted, 'name');
     
-    // try {
-    //   const updated = await ExchangeRate.updateTicker(name, rest);
-    //   console.log('[Update]', name, new Date());
-    // } catch (e) {
-    //   console.error(e);
-    // }
-    // console.log('-------------------------------------------');
+    try {
+      const updated = await ExchangeRate.updateTicker(name, rest);
+      console.log('[Update]', name, new Date());
+    } catch (e) {
+      console.error(e);
+    }
+    console.log('-------------------------------------------');
   }
 }
 
@@ -105,6 +121,6 @@ socket.handleMessage = (message) => {
   }
 }
 // registerInitialExchangeRate();
-socket.handleRefresh = updateEntireRate;
+socket.handleRefresh = () => updateEntireRate();
 
-initialize();
+initialize(registerInitialExchangeRate);

@@ -53,11 +53,11 @@ const User = new Schema({
 });
 
 User.statics.findByEmail = function(email) {
-  return this.findOne({email}).exec();
+  return this.findOne({email})
 };
 
 User.statics.findByDisplayName = function(displayName) {
-  return this.findOne({displayName}).exec();
+  return this.findOne({displayName})
 }
 
 User.statics.findExistancy = function({email, displayName}) {
@@ -66,7 +66,7 @@ User.statics.findExistancy = function({email, displayName}) {
       {email},
       {displayName}
     ]
-  }).exec();
+  });
 }
 
 User.statics.findSocialId = function({provider, id}) {
