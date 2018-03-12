@@ -3,7 +3,7 @@ require('dotenv').config();
 const poloniex = require('../lib/poloniex');
 const db = require('db');
 const ExchangeRate = require('db/models/ExchangeRate');
-const ChartData = require('db/models/chartData');
+const ChartData = require('db/models/ChartData');
 const socket = require('./socket');
 const { parseJSON, polyfill } = require('../lib/common');
 const { currencyPairMap } = require('lib/poloniex/currencyPairMap');
@@ -17,9 +17,14 @@ const initialize = async (registerInitialExchangeRate) => {
     registerInitialExchangeRate();
   }
   await ChartData.drop();
+  console.log('loading chart data since 2015...');
   await importData();
   const current = (new Date()) / 1000;
+
+  console.log('loading chart data a month short term...');
   await importData(300, current - 60 * 60 * 24 * 30);
+
+  console.log('loading chart data few minute short term...');
   await importData(300, (new Date()) / 1000);
   socket.connect();
 }
@@ -47,7 +52,6 @@ async function registerInitialExchangeRate() {
 }
 
 async function importData(period, start) {
-  console.log('loading chart data...');
   const bar = new Progress.Bar({}, Progress.Presets.shades_classic);
   const currencyPairs = [];
   let current = 0;
@@ -121,6 +125,7 @@ socket.handleMessage = (message) => {
   }
 }
 // registerInitialExchangeRate();
+// socket.handleRefresh = () => null;
 socket.handleRefresh = () => updateEntireRate();
 
 initialize(registerInitialExchangeRate);

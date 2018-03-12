@@ -20,6 +20,10 @@ ChartData.statics.drop = function() {
 }
 
 ChartData.statics.massImport = function(name, data) {
+  // console.log(data);
+  if(data[0].open === 0) {
+    return;
+  }
   const converted = data.map(data => Object.assign({}, data, {
     date: data.date * 1000,
     name
